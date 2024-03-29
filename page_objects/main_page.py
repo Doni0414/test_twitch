@@ -1,3 +1,5 @@
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
@@ -18,6 +20,10 @@ class MainPage:
         self.email_input_selector = (By.ID, 'email-input')
         self.remind_me_later_selector = (By.XPATH, '//div[text()="Remind me later"]')
 
+        self.login_button_selector = (By.CSS_SELECTOR, 'button[data-a-target="login-button"]')
+        self.login_input_selector = (By.ID, 'login-username')
+        self.login_pop_button_selector = (By.CSS_SELECTOR, 'button[data-a-target="passport-login-button"]')
+
     def open(self, url):
         self.driver.get(url)
 
@@ -35,7 +41,9 @@ class MainPage:
 
     def send_password(self, password: str):
         password_input = self.driver.find_element(self.password_input_selector[0], self.password_input_selector[1])
-        password_input.send_keys(password)
+        for letter in password:
+            password_input.send_keys(letter)
+            time.sleep(0.2)
 
     def send_birth_month(self, month: str):
         birth_month_select = Select(self.driver.find_element(self.birth_month_selector[0], self.birth_month_selector[1]))
@@ -56,3 +64,17 @@ class MainPage:
     def click_sign_up_pop_button(self):
         sign_up_pop_button = self.driver.find_element(self.sign_up_pop_button_selector[0], self.sign_up_pop_button_selector[1])
         sign_up_pop_button.click()
+
+    def click_login_button(self):
+        login_button = self.driver.find_element(self.login_button_selector[0], self.login_button_selector[1])
+        login_button.click()
+
+    def send_login(self, login):
+        login_input = self.driver.find_element(self.login_input_selector[0], self.login_input_selector[1])
+        for letter in login:
+            login_input.send_keys(letter)
+            time.sleep(0.2)
+
+    def click_login_pop_button(self):
+        login_pop_button = self.driver.find_element(self.login_pop_button_selector[0], self.login_pop_button_selector[1])
+        login_pop_button.click()

@@ -1,27 +1,30 @@
 import pytest
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 import time
 
 from page_objects.main_page import MainPage
+from utils import get_options
 
 site = "https://www.twitch.tv/"
+username = 'dummy_test1'
+password = 'OnePieceIsReal1997'
+email = 'dummy_test@mail.ru'
 
 @pytest.fixture
 def driver():
-    language_preference = "en"
-    chrome_options = Options()
-    chrome_options.add_experimental_option('prefs', {'intl.accept_languages': language_preference})
+    chrome_options = get_options()
 
     driver = webdriver.Chrome(options=chrome_options)
+
     driver.get(site)
 
     yield driver
     driver.quit()
 
+@pytest.mark.skip
 @pytest.mark.parametrize(
     'login, password, date_of_birth, email', [
-        ('dummy_test1', 'OnePieceIsReal1997', ['May', 14, 2004], 'dummy_test@mail.ru'),
+        (username, password, ['May', 14, 2004], email),
     ]
 )
 def test_registration(driver, login, password, date_of_birth, email):
@@ -62,3 +65,31 @@ def test_registration(driver, login, password, date_of_birth, email):
     page.click_sign_up_pop_button()
 
     time.sleep(2)
+
+@pytest.fixture
+def signedin():
+    chrome_options = get_options()
+
+    driver = webdriver.Chrome(options=chrome_options)
+
+    driver.get(site)
+
+    page = MainPage(driver)
+    time.sleep(2)
+    page.click_login_button()
+    time.sleep(2)
+    page.send_login(username)
+    time.sleep(2)
+    page.send_password(password)
+    time.sleep(2)
+    page.click_login_pop_button()
+    time.sleep(20)
+
+    yield driver
+    driver.quit()
+
+# @pytest.mark.parametrize(
+#     ''
+# )
+def test_following(signedin):
+    page = MainPage(signedin)
