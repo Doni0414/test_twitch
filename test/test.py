@@ -91,5 +91,5 @@ def test_favorite_button(signedin):
     time.sleep(3)
     product = book_page.click_first_favorite()
     time.sleep(10)
-    favourite_page = book_page.click_favorites()
+    favourite_page = book_page.pass_to_FavouritePage()
     assert favourite_page.contains_product(product)
