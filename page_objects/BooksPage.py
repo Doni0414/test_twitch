@@ -18,6 +18,7 @@ class BooksPage:
         self.save_book_id_slctr = (By.XPATH, '(//input[@name="cart_id_produce"])[1]')
         self.button_first_favorite_slctr = (By.XPATH, '(//label[contains(@for, "favorites-")])[1]')
         self.button_favorites = (By.XPATH, '//a[@href="/favorites"]')
+        self.button_personalis_slctr = (By.XPATH, '(//a[@href="https://www.flip.kz/user?personalis=person"])[1]')
         self.wait = WebDriverWait(self.driver, 5)
 
     def click_button_add_book(self):
@@ -32,10 +33,14 @@ class BooksPage:
         button_first_favorite.click()
         return self.driver.find_element(By.XPATH, '(//a[@class="title" and contains(@href, "/catalog?prod")])[1]').text
 
-    def click_favorites(self) -> FavoritesPage:
-        page = FavoritesPage(self.driver)
-        page.open()
-        return page
+    def pass_to_FavouritePage(self) -> FavoritesPage:
+        action = webdriver.ActionChains(self.driver)
+        button_personalis = self.find_element(self.button_personalis_slctr)
+        action.move_to_element(button_personalis)
+        action.perform()
+        button_favorites = self.find_element(self.button_favorites)
+        button_favorites.click()
+        return FavoritesPage(self.driver)
 
 
     def pass_to_CartPage(self,bookId: str) -> CartPage:

@@ -5,10 +5,7 @@ from selenium.webdriver.common.by import By
 class FavoritesPage:
     def __init__(self, driver: webdriver.Chrome):
         self.driver = driver
-        self.url = 'https://www.flip.kz/favorites'
 
-    def open(self):
-        self.driver.get(self.url)
 
     def find_element(self, slctr):
         return self.driver.find_element(slctr[0], slctr[1])
