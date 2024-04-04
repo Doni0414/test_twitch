@@ -1,6 +1,7 @@
 import time
 
 from selenium import webdriver
+from selenium.common import StaleElementReferenceException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
@@ -12,6 +13,7 @@ class CartPage:
         self.save_book_id_slctr = (By.XPATH, '(//a[@href="/catalog?prod=' + bookId + '"])/input')
         self.span_total_price_slctr = (By.XPATH, "//span[@class='mclpriceDisc text_att']")
         self.books_price_slctr = (By.XPATH, "//b[@data-summa-total]")
+        self.buttom_delete_product_slctr = (By.XPATH, '//*[@id="module-cart"]/div/div[@class="row"]/div[1]/div/div[2]/div[3]/a')
 
     def save_book_id(self) -> str:
         save_book_id = self.find_element(self.save_book_id_slctr)
@@ -39,3 +41,15 @@ class CartPage:
 
     def clean_price(self, price: str) -> float:
         return float(price.replace(" ", "").replace("₸", ""))
+
+    def clean_cart(self):
+        while True:
+            try:
+                button_delete_product = self.driver.find_element(self.buttom_delete_product_slctr[0],
+                                                                 self.buttom_delete_product_slctr[1])
+                button_delete_product.click()
+            except NoSuchElementException:
+                break
+            except StaleElementReferenceException:
+                continue
+

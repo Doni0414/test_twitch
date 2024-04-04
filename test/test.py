@@ -42,7 +42,7 @@ def test_check_cart(signedin):
     page = MainPage(signedin)
     books_page = page.pass_to_BooksPage()
     bookId = books_page.save_book_id()
-    books_page.click_button_add_book()
+    books_page = page.pass_to_BooksPage()
     cart_page = books_page.pass_to_CartPage(bookId=bookId)
     bookId2 = cart_page.save_book_id()
     assert bookId == bookId2
@@ -147,3 +147,14 @@ def test_change_city(signedin):
     page.click_button_location_choose()
     choosed_location = page.save_location()
     assert current_location == choosed_location
+
+def test_clean_cart(signedin):
+    page = MainPage(signedin)
+    books_page = page.pass_to_BooksPage()
+    books_page.click_button_add_book()
+    bookId = books_page.save_book_id()
+    cart_page = books_page.pass_to_CartPage(bookId= bookId)
+    price = cart_page.compute_total_price()
+    cart_page.clean_cart()
+    after_price = cart_page.compute_total_price()
+    assert price != after_price
