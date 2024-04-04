@@ -25,6 +25,12 @@ class MainPage:
         self.wait = WebDriverWait(self.driver, 10)
         self.input_search_slctr = (By.ID, 'search_input')
         self.search_text_slctr = (By.XPATH, '//h1[@class="cell"]')
+        self.text_current_location_slctr = (By.XPATH, '(//div[@class="p500"])[1]')
+        self.button_location_slctr = (By.ID, 'location-selected')
+        self.button_change_location_slctr = (By.XPATH, '//a[@class="gray"]')
+        self.input_location_slctr = (By.XPATH, '//input[@placeholder="начните вводить"]')
+        self.button_location_choose_slctr = (By.XPATH, '(//ul[@id="locations-result"]/li/a)[1]')
+        self.field_locations_result_slctr = (By.XPATH, '(//ul[@id="locations-result"])')
 
     def click_signin_button(self):
         button_signin = self.find_element(self.button_signin_slctr)
@@ -71,3 +77,26 @@ class MainPage:
 
     def get_search_text(self) -> str:
         return self.find_element(self.search_text_slctr).text
+
+    def save_location(self) -> str:
+        return self.find_element(self.text_current_location_slctr).text
+
+    def move_to_location_button(self):
+        action = webdriver.ActionChains(self.driver)
+        button_location = self.find_element(self.button_location_slctr)
+        action.move_to_element(button_location)
+        action.perform()
+
+    def click_button_change_location(self):
+        button_change_location = self.find_element(self.button_change_location_slctr)
+        button_change_location.click()
+
+    def send_location(self, location: str):
+        input_location = self.find_element(self.input_location_slctr)
+        input_location.send_keys(location)
+
+    def click_button_location_choose(self):
+        field_locations_results = self.wait.until(EC.element_to_be_clickable((By.XPATH, self.field_locations_result_slctr[1])))
+        button_location_choose = self.find_element(self.button_location_choose_slctr)
+        button_location_choose.click()
+

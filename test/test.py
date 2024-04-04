@@ -13,6 +13,7 @@ password = 'onepiece'
 new_password = 'naruto'
 name = "Нурда"
 bookId = ""
+location = "Актобе"
 
 
 @pytest.fixture
@@ -135,3 +136,14 @@ def test_price_is_added_to_cart(signedin):
     print(total_price)
     print(actual_total_price)
     assert total_price == actual_total_price
+
+def test_change_city(signedin):
+    page = MainPage(signedin)
+    time.sleep(3)
+    page.move_to_location_button()
+    current_location = page.save_location()
+    page.click_button_change_location()
+    page.send_location(location)
+    page.click_button_location_choose()
+    choosed_location = page.save_location()
+    assert current_location == choosed_location
