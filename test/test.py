@@ -42,7 +42,7 @@ def test_check_cart(signedin):
     page = MainPage(signedin)
     books_page = page.pass_to_BooksPage()
     bookId = books_page.save_book_id()
-    books_page = page.pass_to_BooksPage()
+    books_page.click_button_add_book()
     cart_page = books_page.pass_to_CartPage(bookId=bookId)
     bookId2 = cart_page.save_book_id()
     assert bookId == bookId2
