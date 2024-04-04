@@ -48,7 +48,6 @@ def test_check_cart(signedin):
     assert bookId == bookId2
 
 
-
 @pytest.fixture
 def signedin():
     chrome_options = get_options()
@@ -65,6 +64,8 @@ def signedin():
     page.click_login()
     yield driver
     driver.quit()
+
+
 @pytest.mark.parametrize(
     'login, password, success', (
             (email, 'OnePieceIsReal', False),
@@ -83,6 +84,7 @@ def test_login(driver, login, password, success):
 
     assert page.is_logged() == success
 
+
 def test_favorite_button(signedin):
     page = MainPage(signedin)
     time.sleep(3)
@@ -93,15 +95,17 @@ def test_favorite_button(signedin):
     favourite_page = book_page.pass_to_FavouritePage()
     assert favourite_page.contains_product(product)
 
+
 @pytest.mark.parametrize(
     'query', [
-            'ручка'
+        'ручка'
     ]
 )
 def test_search(driver, query):
     page = MainPage(driver)
     page.search(query)
     assert page.get_search_text().lower() == query.lower()
+
 
 @pytest.mark.parametrize(
     'old_password, new_password, retry_password, success', [
@@ -125,6 +129,7 @@ def test_change_password(signedin, old_password, new_password, retry_password, s
         password_page.send_retry_password(old_password)
         password_page.click_save()
 
+
 def test_price_is_added_to_cart(signedin):
     page = MainPage(signedin)
     books_page = page.pass_to_BooksPage()
@@ -137,6 +142,7 @@ def test_price_is_added_to_cart(signedin):
     print(actual_total_price)
     assert total_price == actual_total_price
 
+
 def test_change_city(signedin):
     page = MainPage(signedin)
     time.sleep(3)
@@ -148,13 +154,28 @@ def test_change_city(signedin):
     choosed_location = page.save_location()
     assert current_location == choosed_location
 
+
 def test_clean_cart(signedin):
     page = MainPage(signedin)
     books_page = page.pass_to_BooksPage()
     books_page.click_button_add_book()
     bookId = books_page.save_book_id()
-    cart_page = books_page.pass_to_CartPage(bookId= bookId)
+    cart_page = books_page.pass_to_CartPage(bookId=bookId)
     price = cart_page.compute_total_price()
     cart_page.clean_cart()
     after_price = cart_page.compute_total_price()
     assert price != after_price
+
+
+def test_checkbox(signedin):
+    page = MainPage(signedin)
+    book_page = page.pass_to_BooksPage()
+    first_value = book_page.save_checkbox_value()
+    book_page.click_checkbox(1)
+    time.sleep(5)
+    book_page.click_checkbox(2)
+    time.sleep(5)
+    book_page.click_checkbox(3)
+    time.sleep(5)
+    second_value = book_page.save_checkbox_value()
+    assert first_value != second_value
