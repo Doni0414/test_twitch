@@ -1,6 +1,7 @@
 import time
 
 from selenium import webdriver
+from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,9 +22,9 @@ class MainPage:
         self.button_personalis_slctr = (By.XPATH, '(//a[@href="https://www.flip.kz/user?personalis=person"])[1]')
         self.button_books_slctr = (By.XPATH, '(//a[@class="condent p-0-8 "])[5]')
         self.username_container = (By.XPATH, '(//a[@href="https://www.flip.kz/user?personalis"])[1]/span')
-        self.wait = WebDriverWait(self.driver, 5)
-
-
+        self.wait = WebDriverWait(self.driver, 10)
+        self.input_search_slctr = (By.ID, 'search_input')
+        self.search_text_slctr = (By.XPATH, '//h1[@class="cell"]')
 
     def click_signin_button(self):
         button_signin = self.find_element(self.button_signin_slctr)
@@ -62,3 +63,11 @@ class MainPage:
         if self.driver.current_url == 'https://www.flip.kz/user?password':
             return False
         return self.find_element(self.username_container).text != 'Войти'
+
+    def search(self, query: str):
+        el = self.find_element(self.input_search_slctr)
+        el.send_keys(query)
+        el.send_keys(Keys.ENTER)
+
+    def get_search_text(self) -> str:
+        return self.find_element(self.search_text_slctr).text

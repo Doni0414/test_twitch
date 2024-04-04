@@ -4,16 +4,14 @@ import pytest
 from selenium import webdriver
 
 from page_objects.main_page import MainPage
-from page_objects.BooksPage import BooksPage
-from page_objects.CartPage import CartPage
-from page_objects.PersonalInformationPage import PersonalInformation
 
 from utils import get_options
 
 site = "https://www.flip.kz/"
-email = 'qwer254565@gmail.com'
-password = 'Pokemon1'
-name = "Анс"
+email = 'nurdauletagabek2@gmail.com'
+password = 'onepiece'
+new_password = 'naruto'
+name = "Нурда"
 bookId = ""
 
 
@@ -22,7 +20,7 @@ def driver():
     chrome_options = get_options()
 
     driver = webdriver.Chrome(options=chrome_options)
-
+    driver.implicitly_wait(10)
     driver.get(site)
 
     yield driver
@@ -93,3 +91,47 @@ def test_favorite_button(signedin):
     time.sleep(10)
     favourite_page = book_page.pass_to_FavouritePage()
     assert favourite_page.contains_product(product)
+
+@pytest.mark.parametrize(
+    'query', [
+            'ручка'
+    ]
+)
+def test_search(driver, query):
+    page = MainPage(driver)
+    page.search(query)
+    assert page.get_search_text().lower() == query.lower()
+
+@pytest.mark.parametrize(
+    'old_password, new_password, retry_password, success', [
+        (password, new_password, new_password, True),
+        ('qwertybek', new_password, new_password, False),
+        (password, new_password, 'qwertybek', False)
+    ]
+)
+def test_change_password(signedin, old_password, new_password, retry_password, success):
+    page = MainPage(signedin)
+    personalis_page = page.pass_to_PersonalInformation()
+    password_page = personalis_page.pass_to_PasswordPage()
+    password_page.send_old_password(old_password)
+    password_page.send_new_password(new_password)
+    password_page.send_retry_password(retry_password)
+    password_page.click_save()
+    assert password_page.is_password_successfully_changed() == success
+    if success:
+        password_page.send_old_password(new_password)
+        password_page.send_new_password(old_password)
+        password_page.send_retry_password(old_password)
+        password_page.click_save()
+
+def test_price_is_added_to_cart(signedin):
+    page = MainPage(signedin)
+    books_page = page.pass_to_BooksPage()
+    bookId = books_page.save_book_id()
+    books_page.click_button_add_book()
+    cart_page = books_page.pass_to_CartPage(bookId=bookId)
+    total_price = cart_page.get_total_price()
+    actual_total_price = cart_page.compute_total_price()
+    print(total_price)
+    print(actual_total_price)
+    assert total_price == actual_total_price

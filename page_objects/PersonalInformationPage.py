@@ -4,6 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
+from page_objects.PasswordPage import PasswordPage
+
 
 class PersonalInformation:
     def __init__(self, driver: webdriver.Chrome):
@@ -11,6 +13,7 @@ class PersonalInformation:
         self.input_name_selector = (By.CSS_SELECTOR, 'input[name="client_name"]')
         self.button_save_selector = (By.CSS_SELECTOR, 'input[value="Сохранить"]')
         self.button_personalis_slctr = (By.XPATH,'(//a[@href="https://www.flip.kz/user?personalis"])[1]/span')
+        self.button_change_password_slctr = (By.XPATH, "//a[text()='Изменить пароль']")
 
     def send_name(self, name: str):
         input_name = self.find_element(self.input_name_selector)
@@ -31,3 +34,7 @@ class PersonalInformation:
 
     def find_element(self, slctr):
         return self.driver.find_element(slctr[0], slctr[1])
+
+    def pass_to_PasswordPage(self) -> PasswordPage:
+        self.find_element(self.button_change_password_slctr).click()
+        return PasswordPage(self.driver)
