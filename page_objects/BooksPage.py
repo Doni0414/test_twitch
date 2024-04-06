@@ -1,10 +1,6 @@
-import time
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 from page_objects.CartPage import CartPage
 from page_objects.favorites_page import FavoritesPage
@@ -19,7 +15,10 @@ class BooksPage:
         self.button_first_favorite_slctr = (By.XPATH, '(//label[contains(@for, "favorites-")])[1]')
         self.button_favorites = (By.XPATH, '//a[@href="/favorites"]')
         self.button_personalis_slctr = (By.XPATH, '(//a[@href="https://www.flip.kz/user?personalis=person"])[1]')
-        self.wait = WebDriverWait(self.driver, 5)
+        self.wait = WebDriverWait(self.driver, 20)
+        self.checkbox_field_slctr = (By.XPATH, '//ul[@class="underline text-unselectable"]/li/input')
+        self.text_checkbox_value_slctr = (By.XPATH, '//*[@id="main-catalog-filter"]/ul[1]/li[1]/label/div[2]/span')
+        self.field_checkbox_slctr = (By.XPATH, '//*[@id="main-catalog-filter"]/ul[1]')
 
     def click_button_add_book(self):
         action = webdriver.ActionChains(self.driver)
@@ -42,11 +41,10 @@ class BooksPage:
         button_favorites.click()
         return FavoritesPage(self.driver)
 
-
-    def pass_to_CartPage(self,bookId: str) -> CartPage:
+    def pass_to_CartPage(self, bookId: str) -> CartPage:
         button_move_to_cart = self.find_element(self.button_move_to_cart_slctr)
         button_move_to_cart.click()
-        return CartPage(self.driver,bookId=bookId)
+        return CartPage(self.driver, bookId=bookId)
 
     def save_book_id(self) -> str:
         save_book_id = self.find_element(self.save_book_id_slctr)
@@ -54,3 +52,12 @@ class BooksPage:
 
     def find_element(self, slctr):
         return self.driver.find_element(slctr[0], slctr[1])
+
+    def click_checkbox(self, index: int):
+        checkbox_fields = self.driver.find_element(By.XPATH, '(//*[@id="main-catalog-filter"]/ul/li/label/div['
+                                                             '@class="checkbox cell w-o"])[' + str(index) + ']')
+        checkbox_fields.click()
+
+    def save_checkbox_value(self) -> str:
+        text_checkbox_value = self.find_element(self.text_checkbox_value_slctr)
+        return text_checkbox_value.text
